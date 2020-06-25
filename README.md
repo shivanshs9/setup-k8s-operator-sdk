@@ -9,7 +9,7 @@ See [action.yml](action.yml) for more details.
 
 ```yaml
 steps:
-  - uses: shivanshs9/setup-operator-sdk@v1
+  - uses: shivanshs9/setup-k8s-operator-sdk@v1
     with:
       version: "^0.17.0" # The operator-sdk version to download (if necessary) and use.
 ```

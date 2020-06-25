@@ -1,4 +1,4 @@
-name: "Setup Operator SDK"
+name: "setup-k8s-operator-sdk"
 description: "Setup Operator SDK and add it to the PATH"
 author: "Shivansh Saini"
 inputs:
