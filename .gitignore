@@ -84,6 +84,7 @@ typings/
 
 # Next.js build output
 .next
+dist
 
 # Nuxt.js build / generate output
 .nuxt
