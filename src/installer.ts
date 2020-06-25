@@ -11,6 +11,7 @@ export async function installSdk(
   try {
     let match = await findMatch(versionSpec);
     if (match) {
+      debug(`matched SDK release: ${match}`);
       let astBinary, astCheck: ISdkAsset | undefined;
       for (let i = 0; i < match.assets.length; i++) {
         let asset = match.assets[i];

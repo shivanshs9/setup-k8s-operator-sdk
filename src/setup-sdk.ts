@@ -19,7 +19,7 @@ export async function install() {
         `A version satisfying ${versionSpec} not found locally, attempting to download ...`
       );
       installPath = await installer.installSdk(versionSpec);
-      console.log("Installed");
+      if (installPath) console.log("Installed");
     }
 
     if (installPath) {

@@ -2490,19 +2490,21 @@ const core = __importStar(__webpack_require__(470));
 const child_process_1 = __importDefault(__webpack_require__(129));
 const tc = __importStar(__webpack_require__(533));
 const installer = __importStar(__webpack_require__(749));
+const semver = __importStar(__webpack_require__(876));
 function install() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            let versionSpec = core.getInput("version");
+            let versionSpec = semver.clean(core.getInput("version"));
             if (!versionSpec) {
-                throw new Error("Provide operator-sdk version!");
+                throw new Error("Provide valid operator-sdk version according to semver spec!");
             }
             console.log(`Setup operator-sdk version spec ${versionSpec}`);
             let installPath = tc.find("operator-sdk", versionSpec);
             if (!installPath) {
                 console.log(`A version satisfying ${versionSpec} not found locally, attempting to download ...`);
                 installPath = yield installer.installSdk(versionSpec);
-                console.log("Installed");
+                if (installPath)
+                    console.log("Installed");
             }
             if (installPath) {
                 core.addPath(installPath);
@@ -6342,6 +6344,7 @@ function installSdk(versionSpec) {
         try {
             let match = yield findMatch(versionSpec);
             if (match) {
+                core_1.debug(`matched SDK release: ${match}`);
                 let astBinary, astCheck;
                 for (let i = 0; i < match.assets.length; i++) {
                     let asset = match.assets[i];
