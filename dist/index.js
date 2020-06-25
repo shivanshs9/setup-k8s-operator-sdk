@@ -6338,6 +6338,7 @@ const semver = __importStar(__webpack_require__(876));
 const httpm = __importStar(__webpack_require__(539));
 const sys = __importStar(__webpack_require__(737));
 const core_1 = __webpack_require__(470);
+const fs_1 = __webpack_require__(747);
 function installSdk(versionSpec) {
     return __awaiter(this, void 0, void 0, function* () {
         let toolPath;
@@ -6357,6 +6358,7 @@ function installSdk(versionSpec) {
                     console.log(`Downloading from ${astBinary.browser_download_url}`);
                     let binaryPath = yield tc.downloadTool(astBinary.browser_download_url);
                     // let checkPath = await tc.downloadTool(astCheck.browser_download_url)
+                    yield fs_1.promises.chmod(binaryPath, 0o755);
                     let destPath = "operator-sdk";
                     toolPath = yield tc.cacheFile(binaryPath, destPath, "operator-sdk", makeSemver(match.tag_name));
                 }

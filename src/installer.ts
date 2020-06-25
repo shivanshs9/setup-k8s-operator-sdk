@@ -3,6 +3,7 @@ import * as semver from "semver";
 import * as httpm from "@actions/http-client";
 import * as sys from "./system";
 import { debug } from "@actions/core";
+import { promises as fs } from "fs";
 
 export async function installSdk(
   versionSpec: string
@@ -22,6 +23,7 @@ export async function installSdk(
         console.log(`Downloading from ${astBinary.browser_download_url}`);
         let binaryPath = await tc.downloadTool(astBinary.browser_download_url);
         // let checkPath = await tc.downloadTool(astCheck.browser_download_url)
+        await fs.chmod(binaryPath, 0o755);
         let destPath = "operator-sdk";
         toolPath = await tc.cacheFile(
           binaryPath,
