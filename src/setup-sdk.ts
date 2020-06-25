@@ -6,7 +6,7 @@ import * as semver from "semver";
 
 export async function install() {
   try {
-    let versionSpec = semver.clean(core.getInput("version"));
+    let versionSpec = semver.validRange(core.getInput("version"));
     if (!versionSpec) {
       throw new Error(
         "Provide valid operator-sdk version according to semver spec!"

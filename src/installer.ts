@@ -11,7 +11,7 @@ export async function installSdk(
   try {
     let match = await findMatch(versionSpec);
     if (match) {
-      debug(`matched SDK release: ${match}`);
+      debug(`matched SDK release: ${JSON.stringify(match.assets)}`);
       let astBinary, astCheck: ISdkAsset | undefined;
       for (let i = 0; i < match.assets.length; i++) {
         let asset = match.assets[i];
@@ -66,9 +66,9 @@ async function findMatch(
     let version = makeSemver(candidate.tag_name);
     debug(`check ${version} satisfies ${versionSpec}`);
     if (semver.satisfies(version, versionSpec)) {
-      let assets = candidate.assets.filter((asset) => {
-        asset.name.includes(assetFilter);
-      });
+      let assets = candidate.assets.filter((asset) =>
+        asset.name.includes(assetFilter)
+      );
       if (assets) {
         debug(`matched ${version}`);
         result = <ISdkRelease>Object.assign({}, candidate);
@@ -93,20 +93,12 @@ async function getVersions(): Promise<ISdkRelease[] | null> {
 // 1.13.1 => 1.13.1
 // 1.13 => 1.13.0
 // v1.0.0 => 1.0.0
-// 1.10beta1 => 1.10.0-beta1, 1.10rc1 => 1.10.0-rc1
-// 1.8.5beta1 => 1.8.5-beta1, 1.8.5rc1 => 1.8.5-rc1
-export function makeSemver(version: string): string {
-  version = version.replace("v", "");
-  version = version.replace("beta", "-beta").replace("rc", "-rc");
-  let parts = version.split("-");
-
-  let verPart: string = parts[0];
-  let prereleasePart = parts.length > 1 ? `-${parts[1]}` : "";
-
-  let verParts: string[] = verPart.split(".");
-  if (verParts.length == 2) {
-    verPart += ".0";
+export function makeSemver(origVersion: string): string {
+  let version = origVersion;
+  if (version.split(".").length == 2) {
+    version += ".0";
   }
-
-  return `${verPart}${prereleasePart}`;
+  let result = semver.clean(version);
+  if (!result) throw new Error(`Cannot convert "${version}" to semver`);
+  return result;
 }

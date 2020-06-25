@@ -2494,7 +2494,7 @@ const semver = __importStar(__webpack_require__(876));
 function install() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            let versionSpec = semver.clean(core.getInput("version"));
+            let versionSpec = semver.validRange(core.getInput("version"));
             if (!versionSpec) {
                 throw new Error("Provide valid operator-sdk version according to semver spec!");
             }
@@ -6344,7 +6344,7 @@ function installSdk(versionSpec) {
         try {
             let match = yield findMatch(versionSpec);
             if (match) {
-                core_1.debug(`matched SDK release: ${match}`);
+                core_1.debug(`matched SDK release: ${JSON.stringify(match.assets)}`);
                 let astBinary, astCheck;
                 for (let i = 0; i < match.assets.length; i++) {
                     let asset = match.assets[i];
@@ -6385,9 +6385,7 @@ function findMatch(versionSpec) {
             let version = makeSemver(candidate.tag_name);
             core_1.debug(`check ${version} satisfies ${versionSpec}`);
             if (semver.satisfies(version, versionSpec)) {
-                let assets = candidate.assets.filter((asset) => {
-                    asset.name.includes(assetFilter);
-                });
+                let assets = candidate.assets.filter((asset) => asset.name.includes(assetFilter));
                 if (assets) {
                     core_1.debug(`matched ${version}`);
                     result = Object.assign({}, candidate);
@@ -6412,19 +6410,15 @@ function getVersions() {
 // 1.13.1 => 1.13.1
 // 1.13 => 1.13.0
 // v1.0.0 => 1.0.0
-// 1.10beta1 => 1.10.0-beta1, 1.10rc1 => 1.10.0-rc1
-// 1.8.5beta1 => 1.8.5-beta1, 1.8.5rc1 => 1.8.5-rc1
-function makeSemver(version) {
-    version = version.replace("v", "");
-    version = version.replace("beta", "-beta").replace("rc", "-rc");
-    let parts = version.split("-");
-    let verPart = parts[0];
-    let prereleasePart = parts.length > 1 ? `-${parts[1]}` : "";
-    let verParts = verPart.split(".");
-    if (verParts.length == 2) {
-        verPart += ".0";
+function makeSemver(origVersion) {
+    let version = origVersion;
+    if (version.split(".").length == 2) {
+        version += ".0";
     }
-    return `${verPart}${prereleasePart}`;
+    let result = semver.clean(version);
+    if (!result)
+        throw new Error(`Cannot convert "${version}" to semver`);
+    return result;
 }
 exports.makeSemver = makeSemver;
 
