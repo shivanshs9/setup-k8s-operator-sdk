@@ -4,15 +4,15 @@ import * as httpm from "@actions/http-client";
 import * as sys from "./system";
 import { debug } from "@actions/core";
 import { promises as fs } from "fs";
+import constant from "./constant";
 
 export async function installSdk(
   versionSpec: string
 ): Promise<string | undefined> {
   let toolPath: string | undefined;
   try {
-    let match = await findMatch(versionSpec);
+    const match = await findMatch(versionSpec);
     if (match) {
-      debug(`matched SDK release: ${JSON.stringify(match.assets)}`);
       let astBinary, astCheck: ISdkAsset | undefined;
       for (let i = 0; i < match.assets.length; i++) {
         let asset = match.assets[i];
@@ -21,14 +21,16 @@ export async function installSdk(
       }
       if (astBinary && astCheck) {
         console.log(`Downloading from ${astBinary.browser_download_url}`);
-        let binaryPath = await tc.downloadTool(astBinary.browser_download_url);
+        const binaryPath = await tc.downloadTool(
+          astBinary.browser_download_url
+        );
         // let checkPath = await tc.downloadTool(astCheck.browser_download_url)
         await fs.chmod(binaryPath, 0o755);
-        let destPath = "operator-sdk";
+        const destPath = "operator-sdk";
         toolPath = await tc.cacheFile(
           binaryPath,
           destPath,
-          "operator-sdk",
+          constant.CACHE_KEY,
           makeSemver(match.tag_name)
         );
       }
