@@ -2,12 +2,15 @@ import * as core from "@actions/core";
 import cp from "child_process";
 import * as tc from "@actions/tool-cache";
 import * as installer from "./installer";
+import * as semver from "semver";
 
 export async function install() {
   try {
-    let versionSpec = core.getInput("version");
+    let versionSpec = semver.clean(core.getInput("version"));
     if (!versionSpec) {
-      throw new Error("Provide operator-sdk version!");
+      throw new Error(
+        "Provide valid operator-sdk version according to semver spec!"
+      );
     }
     console.log(`Setup operator-sdk version spec ${versionSpec}`);
     let installPath: string | undefined = tc.find("operator-sdk", versionSpec);
