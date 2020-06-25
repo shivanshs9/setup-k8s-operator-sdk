@@ -1,24 +1,13 @@
-name: Build and Release
+name: Release
 on:
   push:
     tags:
       - "v*" # Push events to matching v*, i.e. v1.0, v20.15.10
 jobs:
-  build:
+  release:
     name: Create Release
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Setup node
-        uses: actions/setup-node@v2-beta
-        with:
-          node-version: "12"
-      - uses: bahmutov/npm-install@v1
-      - name: Build package and zip
-        run: |
-          npm run build
-          zip -r asset.zip ./
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -29,13 +18,3 @@ jobs:
           release_name: Release ${{ github.ref }}
           draft: false
           prerelease: false
-      - name: Upload Built Release Asset
-        id: upload_asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./asset.zip
-          asset_name: release.zip
-          asset_content_type: application/zip
