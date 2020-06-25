@@ -1,0 +1,10 @@
+name: "Setup Operator SDK"
+description: "Setup Operator SDK and add it to the PATH"
+author: "Shivansh Saini"
+inputs:
+  version:
+    description: "The Operator-SDK version to download (if necessary) and use. Supports semver spec and ranges."
+    required: true
+runs:
+  using: "node12"
+  main: "dist/index.js"

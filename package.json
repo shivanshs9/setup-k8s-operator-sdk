@@ -1,0 +1,31 @@
+{
+  "name": "setup-operator-sdk",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Setup Operator SDK Action",
+  "main": "lib/main.js",
+  "scripts": {
+    "build": "tsc && ncc build",
+    "format": "prettier --write **/*.ts",
+    "format-check": "prettier --check **/*.ts",
+    "test": "jest --coverage",
+    "pre-checkin": "npm run format && npm run build && npm test"
+  },
+  "author": "Shivansh Saini <shivanshs9@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "^1.2.4",
+    "@actions/http-client": "^1.0.8",
+    "@actions/io": "^1.0.2",
+    "@actions/tool-cache": "^1.5.5",
+    "semver": "^7.3.2"
+  },
+  "devDependencies": {
+    "@types/semver": "^7.3.1",
+    "@zeit/ncc": "^0.22.3",
+    "jest": "^26.1.0",
+    "prettier": "^2.0.5",
+    "ts-jest": "^26.1.1",
+    "typescript": "^3.9.5"
+  }
+}
