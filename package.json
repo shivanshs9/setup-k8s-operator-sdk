@@ -8,7 +8,7 @@
     "build": "tsc && ncc build",
     "format": "prettier --write **/*.ts",
     "format-check": "prettier --check **/*.ts",
-    "test": "jest --coverage",
+    "test": "jest --coverage --passWithNoTests",
     "pre-checkin": "npm run format && npm run build && npm test"
   },
   "author": "Shivansh Saini <shivanshs9@gmail.com>",
