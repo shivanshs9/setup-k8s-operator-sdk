@@ -2,7 +2,7 @@ import * as tc from "@actions/tool-cache";
 import * as semver from "semver";
 import * as httpm from "@actions/http-client";
 import * as sys from "./system";
-import { debug } from "@actions/core";
+import { debug, warning } from "@actions/core";
 import { promises as fs } from "fs";
 import constant from "./constant";
 
@@ -67,7 +67,13 @@ async function findMatch(
   }
   for (let i = 0; i < candidates.length; i++) {
     let candidate = candidates[i];
-    let version = makeSemver(candidate.tag_name);
+    let version;
+    try {
+      version = makeSemver(candidate.tag_name);
+    } catch (error) {
+      warning(`Release "${candidate.tag_name}" does not satisfy semver specification. Ignoring.`)
+      continue
+    }
     debug(`check ${version} satisfies ${versionSpec}`);
     if (semver.satisfies(version, versionSpec)) {
       let assets = candidate.assets.filter((asset) =>
