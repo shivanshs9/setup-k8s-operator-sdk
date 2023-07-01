@@ -19,7 +19,7 @@ export async function installSdk(
         if (asset.name.endsWith(".asc")) astCheck = asset;
         else astBinary = asset;
       }
-      if (astBinary && astCheck) {
+      if (astBinary) {
         console.log(`Downloading from ${astBinary.browser_download_url}`);
         const binaryPath = await tc.downloadTool(
           astBinary.browser_download_url
@@ -57,9 +57,19 @@ async function findMatch(
   versionSpec: string
 ): Promise<ISdkRelease | undefined> {
   let result: ISdkRelease | undefined;
+
   let arch = sys.getArch();
+  if (arch === "x86_64") {
+    arch = "amd64";
+  }
+
   let platform = sys.getPlatform();
-  let assetFilter = `${arch}-${platform}`;
+  if (platform === "linux-gnu") {
+    platform = "linux";
+  }  
+  
+  let assetFilter = `${platform}_${arch}`;
+  
   debug(`assetFilter used - "${assetFilter}"`);
   let candidates = await getVersions();
   if (!candidates) {
